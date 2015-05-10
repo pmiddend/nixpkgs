@@ -605,6 +605,14 @@ let
 
   apg = callPackage ../tools/security/apg { };
 
+  awl = callPackage ../development/libraries/awl { };
+
+  majutsu = callPackage ../development/libraries/majutsu { };
+
+  mizuiro = callPackage ../development/libraries/mizuiro { };
+
+  sge = callPackage ../development/libraries/sge { };
+
   grc = callPackage ../tools/misc/grc { };
 
   lastpass-cli = callPackage ../tools/security/lastpass-cli { };
@@ -1344,6 +1352,8 @@ let
   fcitx-with-plugins = callPackage ../tools/inputmethods/fcitx/wrapper.nix {
     plugins = [ ];
   };
+
+  fcppt = callPackage ../development/libraries/fcppt { };
 
   fcron = callPackage ../tools/system/fcron { };
 
