@@ -21272,6 +21272,8 @@ EOF
   wsproto = callPackage ../development/python-modules/wsproto { };
 
   h11 = callPackage ../development/python-modules/h11 { };
+
+  pysdl2 = callPackage ../development/python-modules/pysdl2 { };
 });
 
 in fix' (extends overrides packages)
