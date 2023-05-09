@@ -1,23 +1,40 @@
-{ stdenv, lib, buildPythonApplication, fetchFromGitHub, pycurl, python-dateutil, configobj, sqlalchemy, sdnotify, flask }:
+{ stdenv, lib, buildPythonApplication, python3, fetchFromGitHub }:
 
+let
+  python = python3.override {
+    packageOverrides = self: super: {
+      # pyCA is incompatible with SQLAlchemy 2.0
+      sqlalchemy = super.sqlalchemy.overridePythonAttrs (old: rec {
+        version = "1.4.46";
+        src = self.fetchPypi {
+          pname = "SQLAlchemy";
+          inherit version;
+          hash = "sha256-aRO4JH2KKS74MVFipRkx4rQM6RaB8bbxj2lwRSAMSjA=";
+        };
+      });
+    };
+  };
+in
 buildPythonApplication rec {
   pname = "pyca";
-  version = "2.1";
+  version = "4.5";
 
   src = fetchFromGitHub {
     owner = "opencast";
     repo = "pyCA";
     rev = "v${version}";
-    sha256 = "0cvkmdlcax9da9iw4ls73vw0pxvm8wvchab5gwdy9w9ibqdpcmwh";
+    sha256 = "sha256-cTkWkOmgxJZlddqaSYKva2wih4Mvsdrd7LD4NggxKQk=";
   };
 
-  propagatedBuildInputs = [
+  propagatedBuildInputs = with python.pkgs; [
     pycurl
     python-dateutil
     configobj
     sqlalchemy
     sdnotify
+    psutil
     flask
+    prometheus-client
   ];
 
   meta = with lib; {
