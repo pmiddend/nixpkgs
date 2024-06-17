@@ -197,24 +197,25 @@ stdenv.mkDerivation rec {
   buildInputs = [
     hdf5
     gsl
+    zlib
     ncurses
-    msgpack
+    # msgpack
     fftw
     fdip
-    zeromq
-    ocl-icd
+    # zeromq
+    # ocl-icd
     libccp4
-    mosflm
-    pinkIndexer
-    xgandalf
-    pandoc
+    # mosflm
+    # pinkIndexer
+    # xgandalf
+    # pandoc
   ] ++ lib.optionals withGui [ gtk3 gdk-pixbuf ]
-  ++ lib.optionals stdenv.isDarwin [
+  ++ lib.optionals (stdenv.isDarwin || stdenv.targetPlatform.isStatic) [
     argp-standalone
   ] ++ lib.optionals (stdenv.isDarwin && !stdenv.isAarch64) [
     memorymappingHook
-  ]
-  ++ lib.optionals withBitshuffle [ hdf5-external-filter-plugins ];
+  ];
+  # ++ lib.optionals withBitshuffle [ hdf5-external-filter-plugins ];
 
   patches = [
     # on darwin at least, we need to link to a separate argp library;
@@ -230,15 +231,17 @@ stdenv.mkDerivation rec {
   # hard-code mosflm's path once.
   postPatch = ''
     sed -i -e 's#execlp("mosflm"#execl("${mosflm}/bin/mosflm"#' libcrystfel/src/indexers/mosflm.c;
+    echo "PKG_CONFIG_PATH=================================================="
+    echo $PKG_CONFIG_PATH
   '';
 
-  postInstall = lib.optionalString withBitshuffle ''
-    for file in $out/bin/*; do
-      wrapProgram $file \
-        --set HDF5_PLUGIN_PATH ${hdf5-external-filter-plugins}/lib/plugins \
-        --prefix PATH ":" ${lib.makeBinPath [ millepede-ii ]}
-    done
-  '';
+  # postInstall = lib.optionalString withBitshuffle ''
+  #   for file in $out/bin/*; do
+  #     wrapProgram $file \
+  #       --set HDF5_PLUGIN_PATH ${hdf5-external-filter-plugins}/lib/plugins \
+  #       --prefix PATH ":" ${lib.makeBinPath [ millepede-ii ]}
+  #   done
+  # '';
 
   meta = with lib; {
     description = "Data processing for serial crystallography";
